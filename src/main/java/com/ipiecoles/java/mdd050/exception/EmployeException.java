@@ -9,4 +9,9 @@ public class EmployeException extends Throwable {
         super(message + valeurIncorrecte + ", employe : " + employe.toString());
         System.out.println(this.getMessage());
     }
+
+    public EmployeException(String message) {
+        super(message);
+        System.out.println(this.getMessage());
+    }
 }

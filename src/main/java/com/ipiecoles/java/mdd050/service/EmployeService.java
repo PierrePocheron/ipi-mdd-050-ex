@@ -3,7 +3,10 @@ package com.ipiecoles.java.mdd050.service;
 import com.ipiecoles.java.mdd050.exception.EmployeException;
 import com.ipiecoles.java.mdd050.model.Employe;
 import com.ipiecoles.java.mdd050.repository.EmployeRepository;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,8 +31,19 @@ public class EmployeService {
         return employeRepository.count();
     }
 
-    public void deleteEmploye(Long id){
-        employeRepository.delete(id);
+    public void deleteEmploye(Long id) throws EmployeException {
+        try {
+            employeRepository.delete(id);
+        } catch (DataIntegrityViolationException e){
+            //Cas particulier de la suppression d'un manager avec equipe
+            if(e.getCause() instanceof ConstraintViolationException) {
+                ConstraintViolationException myException = (ConstraintViolationException) e.getCause();
+                if (myException.getSQLException().getSQLState().equals("23000")) {
+                    throw new EmployeException("Pour supprimer un manager, il faut que son équipe soit vide.");
+                }
+            }
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     public <T extends Employe> T creerEmploye(T e) {

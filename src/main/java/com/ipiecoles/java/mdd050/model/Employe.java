@@ -1,7 +1,7 @@
 package com.ipiecoles.java.mdd050.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
@@ -11,6 +11,10 @@ import java.util.Objects;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({@JsonSubTypes.Type(value = Technicien.class, name = "technicien"),
+		@JsonSubTypes.Type(value = Commercial.class, name = "commercial"),
+		@JsonSubTypes.Type(value = Manager.class, name = "manager")})
 public abstract class Employe implements Serializable {
 
 
@@ -169,5 +173,9 @@ public abstract class Employe implements Serializable {
 	@Override
 	public int hashCode() {
 		return Objects.hash(nom, prenom, matricule, dateEmbauche, salaire);
+	}
+
+	public String getType() {
+		return this.getClass().getSimpleName().toLowerCase();
 	}
 }
