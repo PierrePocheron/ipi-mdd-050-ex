@@ -42,17 +42,11 @@ public class Technicien extends Employe implements Comparable<Technicien> {
 		return super.getNbConges() + this.getNombreAnneeAnciennete();
 	}
 
-	/**
-	 * @return the grade
-	 */
+
 	public Integer getGrade() {
 		return grade;
 	}
 
-	/**
-	 * @param grade the grade to set
-	 * @throws TechnicienException 
-	 */
 	public void setGrade(Integer grade) throws TechnicienException {
 		/*if(grade <= 0 || grade > 5) {
 			throw new TechnicienException(TechnicienException.GRADE, this, grade);
